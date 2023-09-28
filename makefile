@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -g -Wextra -I./include
+CFLAGS = -ggdb -fsanitize=address -fno-omit-frame-pointer -Wall -g -Wextra -I./include
 
 SRCDIR = src
 BUILDDIR = build
@@ -7,7 +7,7 @@ BINDIR = bin
 ASMDIR = assembly
 
 SOURCES = $(wildcard $(SRCDIR)/*.c)
-EXECUTABLE = $(BUILDDIR)/$(BINDIR)/Clox
+EXECUTABLE = $(BUILDDIR)/$(BINDIR)/RickCLib
 
 .PHONY: all clean
 
