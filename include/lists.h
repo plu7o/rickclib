@@ -3,9 +3,8 @@
 
 #include "../include/common.h"
 
-#define GROW_CAPACITY(capacity) ((capacity) < 8 ? 8 : (capacity)*2)
-
-typedef struct {
+// --- Dynamic List ---
+typedef struct List {
   int count;
   int capacity;
   int *data;
@@ -19,5 +18,27 @@ int popList(List *list);
 void removeList(List *list, int index);
 void killList(List *list);
 void printList(List *list);
+
+// --- Linked List ---
+typedef struct Node {
+  int data;
+  struct Node *next;
+} Node;
+
+typedef struct LinkedList {
+  Node *head;
+  Node *tail;
+  int length;
+} LinkedList;
+
+LinkedList *llist_new();
+void llist_insert_end(LinkedList *list, int value);
+void llist_insert_after(LinkedList *list, Node *node, int value);
+void llist_insert_start(LinkedList *list, int value);
+void llist_insert_sorted(LinkedList *list, int value);
+void llist_reverse(LinkedList *list);
+void llist_remove(LinkedList *list, int value);
+void llist_print(LinkedList *list);
+void llist_kill(LinkedList *list);
 
 #endif
