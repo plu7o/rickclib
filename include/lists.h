@@ -4,24 +4,26 @@
 #include "../include/common.h"
 
 // --- Dynamic List ---
-typedef struct List {
+typedef struct DynamicList {
   int count;
   int capacity;
   int *data;
-} List;
+} DynamicList;
 
-List *newList();
-int getList(List *list, int index);
-void addList(List *list, int value);
-void addAllList(List *list, int *values, int size);
-int popList(List *list);
-void removeList(List *list, int index);
-void killList(List *list);
-void printList(List *list);
+DynamicList *dlist_new();
+int dlist_get(DynamicList *list, int index);
+int dlist_pop(DynamicList *list);
+void dlist_push(DynamicList *list, int value);
+void dlist_insert_array(DynamicList *list, int *values, int size);
+// void dlist_reverse(DynamicList *list);
+void dlist_remove(DynamicList *list, int index);
+void dlist_print(DynamicList *list);
+void dlist_print_items(DynamicList *list);
+void dlist_kill(DynamicList *list);
 
-// --- Linked List ---
+// --- Linked DynamicList ---
 typedef struct Node {
-  int data;
+  void *data;
   struct Node *next;
 } Node;
 
@@ -29,15 +31,17 @@ typedef struct LinkedList {
   Node *head;
   Node *tail;
   int length;
+  size_t typeSize;
 } LinkedList;
 
-LinkedList *llist_new();
-void llist_insert_end(LinkedList *list, int value);
-void llist_insert_after(LinkedList *list, Node *node, int value);
-void llist_insert_start(LinkedList *list, int value);
-void llist_insert_sorted(LinkedList *list, int value);
+LinkedList *llist_new(size_t typeSize);
+void *llist_pop(LinkedList *list);
+void llist_insert_end(LinkedList *list, void *value);
+void llist_insert_after(LinkedList *list, Node *node, void *value);
+void llist_insert_start(LinkedList *list, void *value);
+void llist_insert_sorted(LinkedList *list, void *value);
 void llist_reverse(LinkedList *list);
-void llist_remove(LinkedList *list, int value);
+void llist_remove(LinkedList *list, void *value);
 void llist_print(LinkedList *list);
 void llist_kill(LinkedList *list);
 
