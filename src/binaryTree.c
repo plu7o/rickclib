@@ -1,6 +1,5 @@
 #include "../include/lists.h"
 #include "../include/trees.h"
-#include <stdio.h>
 
 BinaryTree *btree_new() {
   BinaryTree *tree = malloc(sizeof(BinaryTree));
@@ -30,7 +29,11 @@ void add(BinaryNode *node, BinaryNode *new_node, char value) {
   }
 }
 
-void btree_insert(BinaryTree *tree, char value) {
+void btree_link(BinaryTree *tree, BinaryNode *parent, BinaryNode *child) {
+  add(parent, child, child->data);
+}
+
+BinaryNode *btree_insert(BinaryTree *tree, char value) {
   BinaryNode *new_node = malloc(sizeof(BinaryNode));
   check_allocated(new_node);
   new_node->data = value;
@@ -40,34 +43,47 @@ void btree_insert(BinaryTree *tree, char value) {
   if (tree->root == NULL) {
     tree->root = new_node;
     tree->total++;
-    return;
+    return new_node;
   }
 
   BinaryNode *root = tree->root;
   add(root, new_node, value);
+  return new_node;
 }
 
 void btree_delete(BinaryTree *tree, char value) {}
 
-void btree_depthf_traverse(BinaryTree *tree) {
+void print_binary_node(void *data) {
+  BinaryNode *node = (BinaryNode *)data;
+  printf("%p Value: %c, Left: %p, Right: %p}\n", node, node->data, node->left,
+         node->right);
+}
+
+LinkedList *btree_depthf_traverse(BinaryTree *tree) {
+  if (tree->root == NULL) {
+    return NULL;
+  }
+
+  LinkedList *result = llist_new(sizeof(BinaryNode));
   LinkedList *stack = llist_new(sizeof(BinaryNode));
-  llist_insert_end(stack, tree->root);
+  llist_push(stack, tree->root);
 
   while (stack->length > 0) {
     BinaryNode *current = (BinaryNode *)llist_pop(stack);
-    printf("{%c, node: %p, left: %p, right: %p}\n", current->data, current, current->left,
-           current->right);
+    llist_push(result, current);
 
     if (current->right) {
-      llist_insert_end(stack, current->right);
+      llist_push(stack, current->right);
+    }
+    if (current->left) {
+      llist_push(stack, current->left);
     }
 
-    if (current->left) {
-      llist_insert_end(stack, current->left);
-    }
     free(current);
+    current = NULL;
   }
   llist_kill(stack);
+  return result;
 }
 
 void btree_kill(BinaryTree *tree) { free(tree); }

@@ -1,6 +1,4 @@
 #include "../include/lists.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 LinkedList *llist_new(size_t typeSize) {
@@ -30,7 +28,7 @@ void llist_kill(LinkedList *list) {
   printf("[FREEING MEMORY]\n");
 }
 
-void llist_insert_end(LinkedList *list, void *value) {
+void llist_push(LinkedList *list, void *value) {
   Node *new_node = (Node *)malloc(sizeof(Node));
   check_allocated(new_node);
 
@@ -168,20 +166,27 @@ void *llist_pop(LinkedList *list) {
   return data;
 }
 
-void llist_print(LinkedList *list) {
+void llist_print(LinkedList *list, print_func printer) {
   printf("[length: %d head: %p tail: %p]\n", list->length, list->head,
          list->tail);
 
   if (list->head == NULL) {
-    printf("[]\n");
+    printf("EMPTY []\n");
     return;
   }
 
-  printf("|   %p, data: %p, next: %p\n", list->head, list->head->data,
-         list->head->next);
-
-  for (Node *curr = list->head->next; curr != NULL; curr = curr->next) {
-    printf("|-> %p, data: %p, next: %p\n", curr, curr->data, curr->next);
+  for (Node *curr = list->head; curr != NULL; curr = curr->next) {
+    if (printer != NULL) {
+      printer(curr->data);
+    } else {
+      printf("[ %p, Data: %p ] -> Next: %p |\n", curr, curr->data, curr->next);
+    }
   }
   printf("\n");
 }
+
+typedef enum print_type {
+  INT,
+  CHAR,
+  STRUCT,
+} print_type;

@@ -15,7 +15,7 @@ int dlist_get(DynamicList *list, int index);
 int dlist_pop(DynamicList *list);
 void dlist_push(DynamicList *list, int value);
 void dlist_insert_array(DynamicList *list, int *values, int size);
-// void dlist_reverse(DynamicList *list);
+void dlist_reverse(DynamicList *list);
 void dlist_remove(DynamicList *list, int index);
 void dlist_print(DynamicList *list);
 void dlist_print_items(DynamicList *list);
@@ -27,22 +27,24 @@ typedef struct Node {
   struct Node *next;
 } Node;
 
+typedef void (*print_func)(void *);
 typedef struct LinkedList {
   Node *head;
   Node *tail;
   int length;
   size_t typeSize;
+  print_func printData;
 } LinkedList;
 
 LinkedList *llist_new(size_t typeSize);
 void *llist_pop(LinkedList *list);
-void llist_insert_end(LinkedList *list, void *value);
+void llist_push(LinkedList *list, void *value);
 void llist_insert_after(LinkedList *list, Node *node, void *value);
 void llist_insert_start(LinkedList *list, void *value);
 void llist_insert_sorted(LinkedList *list, void *value);
 void llist_reverse(LinkedList *list);
 void llist_remove(LinkedList *list, void *value);
-void llist_print(LinkedList *list);
+void llist_print(LinkedList *list, print_func printer);
 void llist_kill(LinkedList *list);
 
 #endif
