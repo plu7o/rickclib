@@ -1,5 +1,6 @@
 #include "../include/lists.h"
 #include "../include/trees.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 void print_int(void *data) {
@@ -42,16 +43,16 @@ void test_linked_list() {
   printf("\n--- LINKED LIST ---\n");
 
   LinkedList *list = llist_new(sizeof(int));
-  
+
   printf("Empty List\n");
   llist_print(list, print_int);
-  
+
   printf("Inserting at End\n");
   for (int i = 0; i < 15; i++) {
     llist_insert_end(list, &i);
   }
   llist_print(list, print_int);
-  
+
   printf("Inserting at Start\n");
   for (int i = 16; i < 30; i++) {
     llist_insert_start(list, &i);
@@ -118,13 +119,23 @@ void test_binary_tree() {
 
   tree->root = a;
 
-  DynamicList *result = (DynamicList *)btree_traverse_depth_first(tree);
+  DynamicList *result = (DynamicList *)btree_depth_first(tree);
   dlist_print(result, print_binary_node);
   dlist_kill(result);
 
-  LinkedList *result1 = (LinkedList *)btree_traverse_depth_first_R(tree);
+  LinkedList *result1 = (LinkedList *)btree_depth_first_recursive(tree);
   llist_print(result1, print_binary_node);
   llist_kill(result1);
+
+  DynamicList *result2 = (DynamicList *)btree_bredth_first(tree);
+  dlist_print(result2, print_binary_node);
+  dlist_kill(result2);
+
+  char probe = 'a';
+  bool result3 = btree_includes(tree, probe);
+  printf("Is letter: %c in TREE ?: %s\n", probe, result3 ? "True" : "False");
+  bool result4 = btree_include_recursive(tree, probe);
+  printf("Is letter: %c in TREE ?: %s\n", probe, result3 ? "True" : "False");
 
   btree_kill(tree);
 

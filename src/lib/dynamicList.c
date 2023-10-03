@@ -100,26 +100,6 @@ void dlist_remove(DynamicList *list, int index) {
   }
 }
 
-void dlist_print(DynamicList *list, print_func printer) {
-  printf("{count: %zu capacity: %zu data: %p}\n", list->count, list->capacity,
-         list->data);
-
-  printf("Items: [ ");
-  for (int i = 0; i < (int)list->count; i++) {
-    if (printer != NULL) {
-      printer(dlist_get(list, i));
-    } else {
-      printf("%p ", dlist_get(list, i));
-    }
-  }
-  printf("]\n");
-}
-
-void dlist_kill(DynamicList *list) {
-  free(list->data);
-  free(list);
-}
-
 void dlist_reverse(DynamicList *list) {
   int start = 0;
   int end = list->count - 1;
@@ -146,4 +126,24 @@ void dlist_reverse(DynamicList *list) {
     start++;
     end--;
   }
+}
+
+void dlist_print(DynamicList *list, print_func printer) {
+  printf("{count: %zu capacity: %zu data: %p}\n", list->count, list->capacity,
+         list->data);
+
+  printf("Items: [ ");
+  for (int i = 0; i < (int)list->count; i++) {
+    if (printer != NULL) {
+      printer(dlist_get(list, i));
+    } else {
+      printf("%p ", dlist_get(list, i));
+    }
+  }
+  printf("]\n");
+}
+
+void dlist_kill(DynamicList *list) {
+  free(list->data);
+  free(list);
 }

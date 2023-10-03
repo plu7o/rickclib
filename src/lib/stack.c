@@ -12,11 +12,19 @@ Stack *stack_new(size_t typeSize) {
   return stack;
 }
 
-void *stack_pop(Stack *stack) { return dlist_pop(stack->list); }
+void *stack_pop(Stack *stack) {
+  stack->length--;
+  return dlist_pop(stack->list);
+}
 
-void stack_push(Stack *stack, void *value) { dlist_append(stack->list, value); }
+void stack_push(Stack *stack, void *value) {
+  stack->length++;
+  dlist_append(stack->list, value);
+}
 
-void stack_print(Stack *stack, print_func printer) { dlist_print(stack->list, printer); }
+void stack_print(Stack *stack, print_func printer) {
+  dlist_print(stack->list, printer);
+}
 
 void stack_kill(Stack *stack) {
   dlist_kill(stack->list);

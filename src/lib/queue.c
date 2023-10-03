@@ -12,14 +12,25 @@ Queue *queue_new(size_t typeSize) {
   return queue;
 }
 
-void *queue_dequeue(Queue *queue) { return llist_pop(queue->list); }
+void *queue_dequeue(Queue *queue) {
+  queue->length--;
+  return llist_pop(queue->list);
+}
 
 void queue_enqueue(Queue *queue, void *value) {
+  queue->length++;
   llist_insert_start(queue->list, value);
 }
 
 void queue_print(Queue *queue, print_func printer) {
   llist_print(queue->list, printer);
+}
+
+bool queue_empty(Queue *queue) {
+  if (queue->length == 0) {
+    return true;
+  }
+  return false;
 }
 
 void queue_kill(Queue *queue) {

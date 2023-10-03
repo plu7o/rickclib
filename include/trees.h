@@ -17,14 +17,16 @@ typedef struct BinaryTree {
   int total;
 } BinaryTree;
 
-
 // Init
 BinaryTree *btree_new();
 
 // Operations
 BinaryNode *btree_insert(BinaryTree *tree, char value);
-DynamicList *btree_traverse_depth_first(BinaryTree *tree);
-LinkedList *btree_traverse_depth_first_R(BinaryTree *tree);
+DynamicList *btree_depth_first(BinaryTree *tree);
+DynamicList *btree_bredth_first(BinaryTree *tree);
+LinkedList *btree_depth_first_recursive(BinaryTree *tree);
+bool btree_includes(BinaryTree *tree, char letter);
+bool btree_include_recursive(BinaryTree *tree, char target);
 void btree_delete(BinaryTree *tree, char value);
 
 // Printing

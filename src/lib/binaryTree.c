@@ -1,6 +1,7 @@
 #include "../../include/lists.h"
 #include "../../include/memory.h"
 #include "../../include/trees.h"
+#include <stdbool.h>
 
 BinaryTree *btree_new() {
   BinaryTree *tree = malloc(sizeof(BinaryTree));
@@ -51,42 +52,42 @@ BinaryNode *btree_insert(BinaryTree *tree, char value) {
 
 void btree_delete(BinaryTree *tree, char value) {}
 
-DynamicList *btree_traverse_depth_first(BinaryTree *tree) {
+DynamicList *btree_depth_first(BinaryTree *tree) {
   DynamicList *result = dlist_new(sizeof(BinaryNode));
   if (tree->root == NULL) {
     return result;
   }
 
-  DynamicList *stack = dlist_new(sizeof(BinaryNode));
-  dlist_append(stack, tree->root);
+  Stack *stack = stack_new(sizeof(BinaryNode));
+  stack_push(stack, tree->root);
 
-  while (stack->count > 0) {
-    BinaryNode *current = (BinaryNode *)dlist_pop(stack);
+  while (stack->length > 0) {
+    BinaryNode *current = (BinaryNode *)stack_pop(stack);
     dlist_append(result, current);
 
     if (current->right) {
-      dlist_append(stack, current->right);
+      stack_push(stack, current->right);
     }
     if (current->left) {
-      dlist_append(stack, current->left);
+      stack_push(stack, current->left);
     }
 
     free(current);
     current = NULL;
   }
-  dlist_kill(stack);
+  stack_kill(stack);
   return result;
 }
 
-LinkedList *traverse_depth_first_R(BinaryNode *root) {
+LinkedList *recursive_depth_first(BinaryNode *root) {
   LinkedList *result = llist_new(sizeof(BinaryNode));
   if (root == NULL) {
     return result;
   }
 
   llist_insert_end(result, root);
-  LinkedList *left = traverse_depth_first_R(root->left);
-  LinkedList *right = traverse_depth_first_R(root->right);
+  LinkedList *left = recursive_depth_first(root->left);
+  LinkedList *right = recursive_depth_first(root->right);
 
   llist_add_all(result, left);
   llist_add_all(result, right);
@@ -96,12 +97,93 @@ LinkedList *traverse_depth_first_R(BinaryNode *root) {
   return result;
 }
 
-LinkedList *btree_traverse_depth_first_R(BinaryTree *tree) {
-  LinkedList *result = traverse_depth_first_R(tree->root);
+LinkedList *btree_depth_first_recursive(BinaryTree *tree) {
+  LinkedList *result = recursive_depth_first(tree->root);
   return result;
 }
 
-void btree_kill(BinaryTree *tree) { free(tree); }
+DynamicList *btree_bredth_first(BinaryTree *tree) {
+  DynamicList *result = dlist_new(sizeof(BinaryNode));
+  if (tree->root == NULL) {
+    return result;
+  }
+
+  Queue *queue = queue_new(sizeof(BinaryNode));
+  queue_enqueue(queue, tree->root);
+
+  while (queue->length > 0) {
+    BinaryNode *current = (BinaryNode *)queue_dequeue(queue);
+    dlist_append(result, current);
+
+    if (current->left != NULL) {
+      queue_enqueue(queue, current->left);
+    }
+    if (current->right != NULL) {
+      queue_enqueue(queue, current->right);
+    }
+    free(current);
+  }
+  queue_kill(queue);
+
+  return result;
+}
+
+bool btree_includes(BinaryTree *tree, char letter) {
+  if (tree->root == NULL) {
+    return false;
+  }
+
+  Queue *queue = queue_new(sizeof(BinaryNode));
+  queue_enqueue(queue, tree->root);
+
+  while (queue->length > 0) {
+    BinaryNode *current = (BinaryNode *)queue_dequeue(queue);
+    if (letter == current->data) {
+      free(current);
+      queue_kill(queue);
+      return true;
+    }
+
+    if (current->left != NULL) {
+      queue_enqueue(queue, current->left);
+    }
+    if (current->right != NULL) {
+      queue_enqueue(queue, current->right);
+    }
+    free(current);
+  }
+  queue_kill(queue);
+
+  return false;
+}
+
+bool recursive_includes(BinaryNode *root, char target) {
+  bool result;
+
+  if (root == NULL) {
+    return false;
+  }
+
+  if (root->data == target) {
+    return true;
+  }
+
+  bool left = recursive_includes(root->left, target);
+  bool right = recursive_includes(root->right, target);
+
+  return left || right;
+}
+
+bool btree_include_recursive(BinaryTree *tree, char target) {
+  bool result = recursive_includes(tree->root, target);
+  return result;
+}
+
+void btree_kill(BinaryTree *tree) {
+  free(tree->root);
+  free(tree);
+  tree = NULL;
+}
 
 void print_binary_node(void *data) {
   BinaryNode *node = (BinaryNode *)data;

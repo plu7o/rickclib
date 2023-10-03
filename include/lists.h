@@ -99,6 +99,7 @@ Queue *queue_new(size_t typeSize);
 // Operations
 void *queue_dequeue(Queue *queue);
 void queue_enqueue(Queue *queue, void *value);
+bool queue_empty(Queue *queue);
 
 // Printing
 void queue_print(Queue *queue, print_func printer);
