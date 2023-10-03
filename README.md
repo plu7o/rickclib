@@ -6,16 +6,16 @@ This repository contains a robust collection of foundational data structures and
 
 ### Lists
 
-- [ ] **Linked List**  
+- [ x ] **Linked List**  
   A linear collection of elements, where each element points to the next one.
   
-- [ ] **Dynamic List (Array List)**  
+- [ x ] **Dynamic List (Array List)**  
   A list that adjusts its size as it grows or shrinks.
   
-- [ ] **Stack**  
+- [ x ] **Stack**  
   A Last In First Out (LIFO) structure supporting push and pop operations.
   
-- [ ] **Queue**  
+- [ x ] **Queue**  
   A First In First Out (FIFO) structure supporting enqueue and dequeue operations.
   
 - [ ] **Doubly Linked List**  
@@ -26,7 +26,7 @@ This repository contains a robust collection of foundational data structures and
 
 ### Trees
 
-- [ ] **Binary Tree**  
+- [ x ] **Binary Tree**  
   A hierarchical structure where each node has at most two children.
   
 - [ ] **Binary Search Tree (BST)**  

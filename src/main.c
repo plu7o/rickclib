@@ -1,72 +1,83 @@
 #include "../include/lists.h"
 #include "../include/trees.h"
-#include <stdio.h>
 #include <stdlib.h>
+
+void print_int(void *data) {
+  int num = *(int *)data;
+  printf("%d ", num);
+}
 
 void test_dynamic_list() {
   printf("\n--- LIST ---\n");
 
-  DynamicList *list = dlist_new();
-  // dlist_print(list);
+  DynamicList *list = dlist_new(sizeof(int));
+  dlist_print(list, print_int);
 
-  // int values[] = {13, 14, 15, 16, 17};
-  // int size = sizeof(values) / sizeof(int);
+  for (int i = 0; i < 30; i++) {
+    dlist_append(list, &i);
+  }
+  dlist_print(list, print_int);
 
-  // dlist_insert_array(list, values, size);
-  // dlist_push(list, 1);
-  // dlist_push(list, 2);
-  // dlist_push(list, 3);
-  // dlist_push(list, 4);
-  // dlist_push(list, 5);
-  // dlist_print(list);
+  int *num = (int *)dlist_pop(list);
+  printf("pop: %d\n", *num);
+  free(num);
+  dlist_print(list, print_int);
 
-  // dlist_pop(list);
-  // dlist_print(list);
+  for (int i = 0; i < 25; i++) {
+    dlist_remove(list, 0);
+  }
+  dlist_print(list, print_int);
 
-  // dlist_remove(list, 5);
-  // dlist_print(list);
+  dlist_reverse(list);
+  dlist_print(list, print_int);
 
-  // dlist_get(list, 0);
+  int result = *(int *)dlist_get(list, 0);
 
-  // dlist_kill(list);
-  printf("\n--- --- ---\n");
+  dlist_kill(list);
+  printf("\n");
 }
 
-void print_int(void *data) {
-  int num = *(int *)data;
-  printf("%d\n", num);
-}
 void test_linked_list() {
 
   printf("\n--- LINKED LIST ---\n");
+
   LinkedList *list = llist_new(sizeof(int));
-
-  int values[] = {1, 2, 3, 4, 5};
-
-  llist_push(list, &values[0]);
-  llist_push(list, &values[1]);
-  llist_push(list, &values[2]);
-  llist_push(list, &values[3]);
-  llist_push(list, &values[4]);
-
+  
+  printf("Empty List\n");
+  llist_print(list, print_int);
+  
+  printf("Inserting at End\n");
+  for (int i = 0; i < 15; i++) {
+    llist_insert_end(list, &i);
+  }
+  llist_print(list, print_int);
+  
+  printf("Inserting at Start\n");
+  for (int i = 16; i < 30; i++) {
+    llist_insert_start(list, &i);
+  }
   // llist_insert_sorted(list, &values[2]);
-  // llist_remove(list, &values[1]);
   llist_print(list, print_int);
 
+  printf("Poppinng Value\n");
   int *value = (int *)llist_pop(list);
   printf("%d\n", *value);
   free(value);
-  llist_print(list, NULL);
+  llist_print(list, print_int);
 
+  printf("Reversed\n");
   llist_reverse(list);
-  llist_print(list, NULL);
+  llist_print(list, print_int);
 
+  printf("Freeing memory\n");
   llist_kill(list);
 
-  printf("\n--- --- ---\n");
+  printf("\n");
 }
 
 void test_binary_tree() {
+  printf("\n--- Binary Tree ---\n");
+
   BinaryTree *tree = btree_new();
 
   BinaryNode *a = malloc(sizeof(BinaryNode));
@@ -107,16 +118,22 @@ void test_binary_tree() {
 
   tree->root = a;
 
-  LinkedList *result = btree_depthf_traverse(tree);
-  llist_print(result, print_binary_node);
-  
-  llist_kill(result);
+  DynamicList *result = (DynamicList *)btree_traverse_depth_first(tree);
+  dlist_print(result, print_binary_node);
+  dlist_kill(result);
+
+  LinkedList *result1 = (LinkedList *)btree_traverse_depth_first_R(tree);
+  llist_print(result1, print_binary_node);
+  llist_kill(result1);
+
   btree_kill(tree);
+
+  printf("\n");
 }
 
 int main(int argc, const char *argv[]) {
-  // test_dynamic_list();
-  // test_linked_list();
+  test_dynamic_list();
+  test_linked_list();
   test_binary_tree();
   return 0;
 }

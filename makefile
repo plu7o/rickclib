@@ -2,11 +2,13 @@ CC = gcc
 CFLAGS =  -ggdb -fsanitize=address -fno-omit-frame-pointer -Wall -g -Wextra -I./include
 
 SRCDIR = src
+LIBDIR = src/lib
+COMMONDIR = src/common
 BUILDDIR = build
 BINDIR = bin
 ASMDIR = assembly
 
-SOURCES = $(wildcard $(SRCDIR)/*.c)
+SOURCES = $(wildcard $(SRCDIR)/*.c $(LIBDIR)/*.c $(COMMONDIR)/*.c)
 EXECUTABLE = $(BUILDDIR)/$(BINDIR)/RickCLib
 
 .PHONY: all clean
