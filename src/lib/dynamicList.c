@@ -1,85 +1,83 @@
 #include "../../include/common.h"
 #include "../../include/lists.h"
 #include "../../include/memory.h"
+#include <stdlib.h>
 #include <string.h>
 
-bool not_in_bounds(DynamicList *list, int index) {
-  if (index < 0 || ((int)list->count - 1) < index) {
-    printf("index: (%d) not in bounds\n", (int)list->count);
+bool not_in_bounds(DynamicList *list, size_t index) {
+  if ((list->length - 1) < index) {
+    printf("index: (%d) not in bounds\n", (int)list->length);
     return true;
   }
   return false;
 }
 
 void shrink(DynamicList *list) {
-  size_t old_size = list->capacity;
+  // Memory Strategy
   list->capacity /= 2;
-  list->data = reallocate(list->data, old_size * list->typeSize,
-                          list->capacity * list->typeSize);
+  list->data = realloc(list->data, list->capacity * list->typeSize);
   check_allocated(list, "Memory allocation failed while shrinking.\n");
 }
 
 void grow(DynamicList *list) {
-  size_t old_size = list->capacity;
-  list->capacity = old_size < 8 ? 8 : (old_size)*2;
-  list->data = reallocate(list->data, old_size * list->typeSize,
-                          list->capacity * list->typeSize);
+  list->capacity = list->capacity < 8 ? 8 : list->capacity * 2;
+  list->data = realloc(list->data, list->capacity * list->typeSize);
   check_allocated(list, "Memory allocation failed while growing.\n");
 }
 
-DynamicList *dlist_new(size_t typeSize) {
+DynamicList *DynList_new(size_t typeSize) {
   DynamicList *list = malloc(sizeof(DynamicList));
   check_allocated(list, "Memory allocation failed during Initilizing.\n");
 
-  list->count = 0;
+  list->length = 0;
   list->capacity = 8;
   list->typeSize = typeSize;
-  list->data = NULL;
+
+  list->data = (void *)calloc(list->capacity, typeSize);
+  check_allocated(list->data, "Memory allocation failed during push.\n");
+
   return list;
 }
 
-void *dlist_get(DynamicList *list, int index) {
+void *DynList_get(DynamicList *list, size_t index) {
   if (not_in_bounds(list, index)) {
     fprintf(stderr, "Index out of bounds\n");
     exit(2);
   }
+
   return (char *)list->data + index * list->typeSize;
 }
 
-void *dlist_pop(DynamicList *list) {
-  if (list->count == 0) {
+void *DynList_pop(DynamicList *list) {
+  if (list->length == 0) {
     return NULL;
   }
 
   void *item = malloc(list->typeSize);
-  memcpy(item, list->data + (list->count - 1) * list->typeSize, list->typeSize);
+  memcpy(item, list->data + (list->length - 1) * list->typeSize,
+         list->typeSize);
+  list->length--;
 
-  list->count--;
-
-  if (list->count < list->capacity / 4) {
+  if (list->length < list->capacity / 4) {
     shrink(list);
   }
+
   // USER NEEDS TO FREE ITEM
   return item;
 }
 
-void dlist_append(DynamicList *list, void *value) {
-  if (list->count == 0) {
-    list->data = reallocate(list->data, 0, list->capacity * list->typeSize);
-    check_allocated(list->data, "Memory allocation failed during push.\n");
-  }
-
-  if (list->count + 1 > list->capacity) {
+void DynList_append(DynamicList *list, void *value) {
+  if (list->length + 1 > list->capacity) {
     grow(list);
   }
 
-  memcpy((char *)list->data + list->count * list->typeSize, value,
+  memcpy((char *)list->data + list->length * list->typeSize, value,
          list->typeSize);
-  list->count++;
+  list->length++;
 }
 
-void dlist_remove(DynamicList *list, int index) {
-  if (list->count == 0) {
+void DynList_remove(DynamicList *list, size_t index) {
+  if (list->length == 0) {
     return;
   }
 
@@ -88,39 +86,56 @@ void dlist_remove(DynamicList *list, int index) {
     exit(2);
   }
 
-  // free((char *)list->data + index * list->typeSize);
   memmove((char *)list->data + index * list->typeSize,
           (char *)list->data + (index + 1) * list->typeSize,
-          (list->count - index - 1) * list->typeSize);
+          (list->length - index - 1) * list->typeSize);
 
-  list->count--;
+  list->length--;
 
-  if (list->count < list->capacity / 4) {
+  if (list->length < list->capacity / 4) {
     shrink(list);
   }
 }
 
-void dlist_reverse(DynamicList *list) {
+void DynList_set(DynamicList *list, size_t index, void *value) {
+  if (list->length == 0) {
+    return;
+  }
+
+  if (not_in_bounds(list, index)) {
+    fprintf(stderr, "Index out of bounds");
+    exit(2);
+  }
+
+  memcpy(list->data + index * list->typeSize, value, list->typeSize);
+}
+
+void DynList_reverse_alt(DynamicList *list) {
+  int size = list->length;
+  for (int i = 0; i > size / 2; i++) {
+    void *item = DynList_get(list, i);
+    DynList_set(list, i, DynList_get(list, (size - i - 1)));
+    DynList_set(list, (size - i - 1), item);
+  }
+}
+
+void DynList_reverse(DynamicList *list) {
   int start = 0;
-  int end = list->count - 1;
+  int end = list->length - 1;
 
   while (start < end) {
     // Swap data at positions 'start' and 'end'
 
-    void *startPtr = dlist_get(list, start);
-    void *endPtr = dlist_get(list, end);
+    void *startPtr = DynList_get(list, start);
+    void *endPtr = DynList_get(list, end);
 
     void *temp = malloc(list->typeSize);
     check_allocated(temp, "Memory allocation failed during reverse.\n");
 
-    // Copy data from 'start' to 'temp'
     memcpy(temp, startPtr, list->typeSize);
-    // Copy data from 'end' to 'start'
     memcpy(startPtr, endPtr, list->typeSize);
-    // Copy data from 'temp' to 'end'
     memcpy(endPtr, temp, list->typeSize);
 
-    // Free the temporary storage
     free(temp);
 
     start++;
@@ -128,22 +143,25 @@ void dlist_reverse(DynamicList *list) {
   }
 }
 
-void dlist_print(DynamicList *list, print_func printer) {
-  printf("{count: %zu capacity: %zu data: %p}\n", list->count, list->capacity,
+bool DynList_is_empty(DynamicList *list) { return list->length == 0; }
+
+void DynList_print(DynamicList *list, callback_func printer) {
+  printf("{length: %zu capacity: %zu data: %p}\n", list->length, list->capacity,
          list->data);
 
   printf("Items: [ ");
-  for (int i = 0; i < (int)list->count; i++) {
+  for (size_t i = 0; i < list->length; i++) {
     if (printer != NULL) {
-      printer(dlist_get(list, i));
+      printer(DynList_get(list, i));
     } else {
-      printf("%p ", dlist_get(list, i));
+      printf("%p ", DynList_get(list, i));
     }
   }
   printf("]\n");
 }
 
-void dlist_kill(DynamicList *list) {
+void DynList_kill(DynamicList *list) {
   free(list->data);
   free(list);
+  list = NULL;
 }

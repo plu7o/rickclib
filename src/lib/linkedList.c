@@ -167,7 +167,7 @@ void llist_reverse(LinkedList *list) {
   list->head = prev;
 }
 
-void llist_print(LinkedList *list, print_func printer) {
+void llist_print(LinkedList *list, callback_func printer) {
   printf("[length: %d head: %p tail: %p]\n", list->length, list->head,
          list->tail);
 
@@ -197,7 +197,6 @@ void llist_kill(LinkedList *list) {
     list->length--;
     list->head = current;
   }
-
   free(list);
   list = NULL;
 }

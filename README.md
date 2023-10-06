@@ -12,7 +12,7 @@ This repository contains a robust collection of foundational data structures and
 - [x] **Dynamic List (Array List)**  
   A list that adjusts its size as it grows or shrinks.
   
-- [x ] **Stack**  
+- [x] **Stack**  
   A Last In First Out (LIFO) structure supporting push and pop operations.
   
 - [x] **Queue**  
@@ -26,7 +26,7 @@ This repository contains a robust collection of foundational data structures and
 
 ### Trees
 
-- [ x ] **Binary Tree**  
+- [x] **Binary Tree**  
   A hierarchical structure where each node has at most two children.
   
 - [ ] **Binary Search Tree (BST)**  

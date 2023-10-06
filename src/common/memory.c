@@ -17,3 +17,13 @@ void check_allocated(void *pointer, char *chars) {
     exit(1);
   }
 }
+
+
+
+
+
+
+
+
+
+

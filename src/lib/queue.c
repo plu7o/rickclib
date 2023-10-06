@@ -22,7 +22,7 @@ void queue_enqueue(Queue *queue, void *value) {
   llist_insert_start(queue->list, value);
 }
 
-void queue_print(Queue *queue, print_func printer) {
+void queue_print(Queue *queue, callback_func printer) {
   llist_print(queue->list, printer);
 }
 

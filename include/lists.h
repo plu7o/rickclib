@@ -4,32 +4,34 @@
 #include "../include/common.h"
 
 // Function Pointer for custom printing function for printing items
-typedef void (*print_func)(void *);
+typedef void (*callback_func)(void *);
 
 // --------------------- Dynamic List ---------------------
 
 typedef struct DynamicList {
-  size_t count;
+  size_t length;
   size_t capacity;
-  void *data;
   size_t typeSize;
+  void *data;
 } DynamicList;
 
 // Init
-DynamicList *dlist_new(size_t typeSize);
+DynamicList *DynList_new(size_t typeSize);
 
 // Operations
-void *dlist_get(DynamicList *list, int index);
-void *dlist_pop(DynamicList *list);
-void dlist_remove(DynamicList *list, int index);
-void dlist_append(DynamicList *list, void *value);
-void dlist_reverse(DynamicList *list);
+void *DynList_get(DynamicList *list, size_t index);
+void *DynList_pop(DynamicList *list);
+void DynList_set(DynamicList *list, size_t index, void *value);
+void DynList_remove(DynamicList *list, size_t index);
+void DynList_append(DynamicList *list, void *value);
+bool DynList_is_empty(DynamicList *list);
+void DynList_reverse(DynamicList *list);
 
 // Printing
-void dlist_print(DynamicList *list, print_func printer);
+void DynList_print(DynamicList *list, callback_func printer);
 
 // Freeing
-void dlist_kill(DynamicList *list);
+void DynList_kill(DynamicList *list);
 
 // --------------------- Linked List ---------------------
 
@@ -59,7 +61,7 @@ void llist_add_all(LinkedList *result, LinkedList *add);
 void llist_reverse(LinkedList *list);
 
 // Printing
-void llist_print(LinkedList *list, print_func printer);
+void llist_print(LinkedList *list, callback_func printer);
 
 // Freeing
 void llist_kill(LinkedList *list);
@@ -80,7 +82,7 @@ void *stack_pop(Stack *stack);
 void stack_push(Stack *stack, void *value);
 
 // Printing
-void stack_print(Stack *stack, print_func printer);
+void stack_print(Stack *stack, callback_func printer);
 
 // Freeing
 void stack_kill(Stack *stack);
@@ -102,7 +104,7 @@ void queue_enqueue(Queue *queue, void *value);
 bool queue_empty(Queue *queue);
 
 // Printing
-void queue_print(Queue *queue, print_func printer);
+void queue_print(Queue *queue, callback_func printer);
 
 // Freeing
 void queue_kill(Queue *queue);

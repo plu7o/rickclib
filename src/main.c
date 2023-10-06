@@ -1,5 +1,6 @@
 #include "../include/lists.h"
 #include "../include/trees.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,30 +12,54 @@ void print_int(void *data) {
 void test_dynamic_list() {
   printf("\n--- LIST ---\n");
 
-  DynamicList *list = dlist_new(sizeof(int));
-  dlist_print(list, print_int);
+  printf("INIT\n");
+  DynamicList *list = DynList_new(sizeof(int));
+  DynList_print(list, print_int);
 
+  printf("APPEDNING ITEMS\n");
   for (int i = 0; i < 30; i++) {
-    dlist_append(list, &i);
+    DynList_append(list, &i);
   }
-  dlist_print(list, print_int);
+  DynList_print(list, print_int);
+  assert(list->length == 30);
 
-  int *num = (int *)dlist_pop(list);
-  printf("pop: %d\n", *num);
+  printf("GETTING ITEM\n");
+  int *result = (int *)DynList_get(list, 0);
+  printf("= %d\n", *result);
+  DynList_print(list, print_int);
+  assert(*result == 0);
+
+  printf("POPPING ITEM\n");
+  int *num = (int *)DynList_pop(list);
+  printf("= %d\n", *num);
+  DynList_print(list, print_int);
+  assert(*num == 29);
   free(num);
-  dlist_print(list, print_int);
 
+  printf("SETTING ITEM\n");
+  int number = 100;
+  DynList_set(list, 0, &number);
+  DynList_print(list, print_int);
+  assert(*(int *)DynList_get(list, 0) == number);
+
+  printf("REMOVING ITEMS\n");
   for (int i = 0; i < 25; i++) {
-    dlist_remove(list, 0);
+    DynList_remove(list, 0);
   }
-  dlist_print(list, print_int);
+  DynList_print(list, print_int);
+  assert(list->length == 4);
 
-  dlist_reverse(list);
-  dlist_print(list, print_int);
+  printf("REVERSING LIST\n");
+  DynList_reverse(list);
+  DynList_print(list, print_int);
 
-  int result = *(int *)dlist_get(list, 0);
+  printf("IS EMPTY?\n");
+  bool yesorno = DynList_is_empty(list);
+  printf("= %s\n", yesorno ? "TRUE" : "FALSE");
+  assert(yesorno == false);
 
-  dlist_kill(list);
+  printf("FREEING MEMORY\n");
+  DynList_kill(list);
   printf("\n");
 }
 
@@ -82,34 +107,40 @@ void test_binary_tree() {
   BinaryTree *tree = btree_new();
 
   BinaryNode *a = malloc(sizeof(BinaryNode));
-  a->data = 'a';
+  a->data.charValue = 'a';
   a->right = NULL;
   a->left = NULL;
+  a->type = TYPE_CHAR;
 
   BinaryNode *b = malloc(sizeof(BinaryNode));
-  b->data = 'b';
+  b->data.charValue = 'b';
   b->right = NULL;
   b->left = NULL;
+  b->type = TYPE_CHAR;
 
   BinaryNode *c = malloc(sizeof(BinaryNode));
-  c->data = 'c';
+  c->data.charValue = 'c';
   c->right = NULL;
   c->left = NULL;
+  c->type = TYPE_CHAR;
 
   BinaryNode *d = malloc(sizeof(BinaryNode));
-  d->data = 'd';
+  d->data.charValue = 'd';
   d->right = NULL;
   d->left = NULL;
+  d->type = TYPE_CHAR;
 
   BinaryNode *e = malloc(sizeof(BinaryNode));
-  e->data = 'e';
+  e->data.charValue = 'e';
   e->right = NULL;
   e->left = NULL;
+  e->type = TYPE_CHAR;
 
   BinaryNode *f = malloc(sizeof(BinaryNode));
-  f->data = 'f';
+  f->data.charValue = 'f';
   f->right = NULL;
   f->left = NULL;
+  f->type = TYPE_CHAR;
 
   a->left = b;
   a->right = c;
@@ -120,22 +151,42 @@ void test_binary_tree() {
   tree->root = a;
 
   DynamicList *result = (DynamicList *)btree_depth_first(tree);
-  dlist_print(result, print_binary_node);
-  dlist_kill(result);
+  DynList_print(result, print_binary_node);
+  DynList_kill(result);
 
   LinkedList *result1 = (LinkedList *)btree_depth_first_recursive(tree);
   llist_print(result1, print_binary_node);
   llist_kill(result1);
 
   DynamicList *result2 = (DynamicList *)btree_bredth_first(tree);
-  dlist_print(result2, print_binary_node);
-  dlist_kill(result2);
+  DynList_print(result2, print_binary_node);
+  DynList_kill(result2);
 
   char probe = 'a';
   bool result3 = btree_includes(tree, probe);
   printf("Is letter: %c in TREE ?: %s\n", probe, result3 ? "True" : "False");
   bool result4 = btree_include_recursive(tree, probe);
   printf("Is letter: %c in TREE ?: %s\n", probe, result3 ? "True" : "False");
+
+  a->data.intValue = 1;
+  a->type = TYPE_INT;
+  b->data.intValue = 2;
+  b->type = TYPE_INT;
+  c->data.intValue = 3;
+  c->type = TYPE_INT;
+  d->data.intValue = 4;
+  d->type = TYPE_INT;
+  e->data.intValue = 5;
+  e->type = TYPE_INT;
+  f->data.intValue = 6;
+  f->type = TYPE_INT;
+
+  int result5 = btree_sum(tree);
+  printf("sum: %d\n", result5);
+  int result6 = btree_sum_recursive(tree);
+  printf("sum: %d\n", result6);
+
+  btree_print(tree);
 
   btree_kill(tree);
 
