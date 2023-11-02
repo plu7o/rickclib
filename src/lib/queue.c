@@ -7,23 +7,23 @@ Queue *queue_new(size_t typeSize) {
 
   queue->length = 0;
   queue->typeSize = typeSize;
-  queue->list = llist_new(typeSize);
+  queue->list = LinkList_new(typeSize);
 
   return queue;
 }
 
 void *queue_dequeue(Queue *queue) {
   queue->length--;
-  return llist_pop(queue->list);
+  return LinkList_pop(queue->list);
 }
 
 void queue_enqueue(Queue *queue, void *value) {
   queue->length++;
-  llist_insert_start(queue->list, value);
+  LinkList_insert_start(queue->list, value);
 }
 
 void queue_print(Queue *queue, callback_func printer) {
-  llist_print(queue->list, printer);
+  LinkList_print(queue->list, printer);
 }
 
 bool queue_empty(Queue *queue) {
@@ -34,6 +34,6 @@ bool queue_empty(Queue *queue) {
 }
 
 void queue_kill(Queue *queue) {
-  llist_kill(queue->list);
+  LinkList_kill(queue->list);
   free(queue);
 }

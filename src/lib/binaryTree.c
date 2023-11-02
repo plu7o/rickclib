@@ -1,8 +1,7 @@
 #include "../../include/lists.h"
 #include "../../include/memory.h"
 #include "../../include/trees.h"
-#include <stdbool.h>
-#include <stdlib.h>
+#include <limits.h>
 
 BinaryTree *btree_new() {
   BinaryTree *tree = malloc(sizeof(BinaryTree));
@@ -133,19 +132,19 @@ DynamicList *btree_depth_first(BinaryTree *tree) {
 }
 
 LinkedList *recursive_depth_first(BinaryNode *root) {
-  LinkedList *result = llist_new(sizeof(BinaryNode));
+  LinkedList *result = LinkList_new(sizeof(BinaryNode));
   if (root == NULL) {
     return result;
   }
 
-  llist_insert_end(result, root);
+  LinkList_insert_end(result, root);
   LinkedList *left = recursive_depth_first(root->left);
   LinkedList *right = recursive_depth_first(root->right);
 
-  llist_add_all(result, left);
-  llist_add_all(result, right);
-  llist_kill(left);
-  llist_kill(right);
+  LinkList_add_all(result, left);
+  LinkList_add_all(result, right);
+  LinkList_kill(left);
+  LinkList_kill(right);
 
   return result;
 }
@@ -221,8 +220,8 @@ bool recursive_includes(BinaryNode *root, char target) {
     return true;
   }
 
-  return recursive_includes(root->left, target) || recursive_includes(root->right, target);
-
+  return recursive_includes(root->left, target) ||
+         recursive_includes(root->right, target);
 }
 
 bool btree_include_recursive(BinaryTree *tree, char target) {
@@ -267,6 +266,67 @@ int depth_sum_recursive(BinaryNode *root) {
 
 int btree_sum_recursive(BinaryTree *tree) {
   int result = depth_sum_recursive(tree->root);
+  return result;
+}
+
+int depth_minimum_recursive(BinaryNode *root) {
+  if (root == NULL) {
+    return INT_MAX;
+  }
+
+  int min = root->data.intValue;
+  int left = depth_minimum_recursive(root->left);
+  int right = depth_minimum_recursive(root->right);
+
+  return left < min && left < right
+             ? left
+             : (right < min && right < left ? right : min);
+}
+
+int btree_minimum_recursive(BinaryTree *tree) {
+  int result = depth_minimum_recursive(tree->root);
+  return result;
+}
+
+int btree_minimum(BinaryTree *tree) {
+  Queue *queue = queue_new(sizeof(BinaryNode));
+  queue_enqueue(queue, tree->root);
+  int minimum = INT_MAX;
+
+  while (queue->length > 0) {
+    BinaryNode *current = queue_dequeue(queue);
+    if (current->data.intValue < minimum) {
+      minimum = current->data.intValue;
+    }
+    if (current->right != NULL) {
+      queue_enqueue(queue, current->right);
+    }
+    if (current->left != NULL) {
+      queue_enqueue(queue, current->left);
+    }
+    free(current);
+  }
+  queue_kill(queue);
+
+  return minimum;
+}
+
+int max_rl_path_recursive(BinaryNode *root) {
+  if (root->left == NULL && root->right == NULL) {
+    return root->data.intValue;
+  }
+  if (root) {
+    return -INT_MAX;
+  }
+
+  int left = max_rl_path_recursive(root->left);
+  int right = max_rl_path_recursive(root->right);
+
+  return root->data.intValue + (left >= right ? left : right);
+}
+
+int btree_max_rl_path_recursive(BinaryTree *tree) {
+  int result = max_rl_path_recursive(tree->root);
   return result;
 }
 

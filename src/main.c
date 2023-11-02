@@ -67,36 +67,36 @@ void test_linked_list() {
 
   printf("\n--- LINKED LIST ---\n");
 
-  LinkedList *list = llist_new(sizeof(int));
+  LinkedList *list = LinkList_new(sizeof(int));
 
   printf("Empty List\n");
-  llist_print(list, print_int);
+  LinkList_print(list, print_int);
 
   printf("Inserting at End\n");
   for (int i = 0; i < 15; i++) {
-    llist_insert_end(list, &i);
+    LinkList_insert_end(list, &i);
   }
-  llist_print(list, print_int);
+  LinkList_print(list, print_int);
 
   printf("Inserting at Start\n");
   for (int i = 16; i < 30; i++) {
-    llist_insert_start(list, &i);
+    LinkList_insert_start(list, &i);
   }
-  // llist_insert_sorted(list, &values[2]);
-  llist_print(list, print_int);
+  // LinkList_insert_sorted(list, &values[2]);
+  LinkList_print(list, print_int);
 
   printf("Poppinng Value\n");
-  int *value = (int *)llist_pop(list);
+  int *value = (int *)LinkList_pop(list);
   printf("%d\n", *value);
   free(value);
-  llist_print(list, print_int);
+  LinkList_print(list, print_int);
 
   printf("Reversed\n");
-  llist_reverse(list);
-  llist_print(list, print_int);
+  LinkList_reverse(list);
+  LinkList_print(list, print_int);
 
   printf("Freeing memory\n");
-  llist_kill(list);
+  LinkList_kill(list);
 
   printf("\n");
 }
@@ -155,8 +155,8 @@ void test_binary_tree() {
   DynList_kill(result);
 
   LinkedList *result1 = (LinkedList *)btree_depth_first_recursive(tree);
-  llist_print(result1, print_binary_node);
-  llist_kill(result1);
+  LinkList_print(result1, print_binary_node);
+  LinkList_kill(result1);
 
   DynamicList *result2 = (DynamicList *)btree_bredth_first(tree);
   DynList_print(result2, print_binary_node);
@@ -168,17 +168,17 @@ void test_binary_tree() {
   bool result4 = btree_include_recursive(tree, probe);
   printf("Is letter: %c in TREE ?: %s\n", probe, result3 ? "True" : "False");
 
-  a->data.intValue = 1;
+  a->data.intValue = 3;
   a->type = TYPE_INT;
-  b->data.intValue = 2;
+  b->data.intValue = 9;
   b->type = TYPE_INT;
-  c->data.intValue = 3;
+  c->data.intValue = 2;
   c->type = TYPE_INT;
   d->data.intValue = 4;
   d->type = TYPE_INT;
   e->data.intValue = 5;
   e->type = TYPE_INT;
-  f->data.intValue = 6;
+  f->data.intValue = 2;
   f->type = TYPE_INT;
 
   int result5 = btree_sum(tree);
@@ -186,8 +186,14 @@ void test_binary_tree() {
   int result6 = btree_sum_recursive(tree);
   printf("sum: %d\n", result6);
 
-  btree_print(tree);
+  int result7 = btree_minimum(tree);
+  printf("minimum: %d\n", result7);
+  int result8 = btree_minimum_recursive(tree);
+  printf("minimum: %d\n", result8);
+  int result9 = btree_max_rl_path_recursive(tree);
+  printf("Max Path: %d\n", result9);
 
+  btree_print(tree);
   btree_kill(tree);
 
   printf("\n");

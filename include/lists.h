@@ -5,6 +5,7 @@
 
 // Function Pointer for custom printing function for printing items
 typedef void (*callback_func)(void *);
+typedef bool (*operation_func)(void *, void *);
 
 // --------------------- Dynamic List ---------------------
 
@@ -48,23 +49,65 @@ typedef struct LinkedList {
 } LinkedList;
 
 // Init
-LinkedList *llist_new(size_t typeSize);
+LinkedList *LinkList_new(size_t typeSize);
 
 // Operations
-void *llist_pop(LinkedList *list);
-void llist_remove(LinkedList *list, void *value);
-void llist_insert_end(LinkedList *list, void *value);
-void llist_insert_start(LinkedList *list, void *value);
-void llist_insert_after(LinkedList *list, Node *node, void *value);
-void llist_insert_sorted(LinkedList *list, void *value);
-void llist_add_all(LinkedList *result, LinkedList *add);
-void llist_reverse(LinkedList *list);
+void *LinkList_pop(LinkedList *list);
+void LinkList_remove(LinkedList *list, void *value);
+void LinkList_insert_end(LinkedList *list, void *value);
+void LinkList_insert_start(LinkedList *list, void *value);
+void LinkList_insert_after(LinkedList *list, Node *node, void *value);
+void LinkList_insert_sorted(LinkedList *list, void *value,
+                            operation_func comparitor);
+void LinkList_add_all(LinkedList *result, LinkedList *add);
+void LinkList_reverse(LinkedList *list);
+bool LinkList_find_loop(LinkedList *list);
+int LinkList_count_iter(LinkedList *list);
+int LinkList_count(Node *node);
 
 // Printing
-void llist_print(LinkedList *list, callback_func printer);
+void LinkList_print(LinkedList *list, callback_func printer);
 
 // Freeing
-void llist_kill(LinkedList *list);
+void LinkList_kill(LinkedList *list);
+
+// --------------------- Double Linked List ---------------------
+
+typedef struct DNode {
+  void *data;
+  struct DNode *next;
+  struct DNode *prev;
+} DNode;
+
+typedef struct DLinkedList {
+  DNode *head;
+  DNode *tail;
+  int length;
+  size_t typeSize;
+} DLinkedList;
+
+// Init
+DLinkedList *DLinkList_new(size_t typeSize);
+
+// Operations
+void *DLinkList_pop(DLinkedList *list);
+void DLinkList_remove(DLinkedList *list, void *value);
+void DLinkList_insert_end(DLinkedList *list, void *value);
+void DLinkList_insert_start(DLinkedList *list, void *value);
+void DLinkList_insert_after(DLinkedList *list, DNode *node, void *value);
+void DLinkList_insert_sorted(DLinkedList *list, void *value,
+                             operation_func comparitor);
+void DLinkList_add_all(DLinkedList *result, DLinkedList *add);
+void DLinkList_reverse(DLinkedList *list);
+bool DLinkList_find_loop(DLinkedList *list);
+int DLinkList_count_iter(DLinkedList *list);
+int DLinkList_count(Node *node);
+
+// Printing
+void LinkList_print(LinkedList *list, callback_func printer);
+
+// Freeing
+void LinkList_kill(LinkedList *list);
 
 // --------------------- Stack ---------------------
 

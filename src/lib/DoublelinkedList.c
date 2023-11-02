@@ -3,8 +3,8 @@
 
 #include <string.h>
 
-LinkedList *LinkList_new(size_t typeSize) {
-  LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
+DLinkedList *DLinkList_new(size_t typeSize) {
+  DLinkedList *list = (DLinkedList *)malloc(sizeof(DLinkedList));
   check_allocated(list, "Memory allocation failed during Initiliting\n");
 
   list->head = NULL;
@@ -15,9 +15,9 @@ LinkedList *LinkList_new(size_t typeSize) {
   return list;
 }
 
-bool LinkList_find_loop(LinkedList *list) {
-  Node *slow = list->head;
-  Node *fast = list->head;
+bool DLinkList_find_loop(DLinkedList *list) {
+  DNode *slow = list->head;
+  DNode *fast = list->head;
 
   while (slow != NULL && fast != NULL && fast->next != NULL) {
     slow = slow->next;
@@ -102,8 +102,8 @@ void LinkList_remove(LinkedList *list, void *value) {
   }
 }
 
-void LinkList_insert_end(LinkedList *list, void *value) {
-  Node *new_node = (Node *)malloc(sizeof(Node));
+void DLinkList_insert_end(DLinkedList *list, void *value) {
+  DNode *new_node = (DNode *)malloc(sizeof(DNode));
   check_allocated(new_node,
                   "Memory allocation failed during allocating new Node\n");
 
@@ -115,19 +115,21 @@ void LinkList_insert_end(LinkedList *list, void *value) {
   new_node->next = NULL;
 
   if (list->head == NULL) {
+    new_node->prev = NULL;
     list->head = new_node;
     list->tail = new_node;
     list->length++;
     return;
   }
 
+  new_node->prev = list->tail;
   list->tail->next = new_node;
   list->tail = new_node;
   list->length++;
 }
 
-void LinkList_insert_start(LinkedList *list, void *value) {
-  Node *new_node = (Node *)malloc(sizeof(Node));
+void DLinkList_insert_start(DLinkedList *list, void *value) {
+  DNode *new_node = (DNode *)malloc(sizeof(DNode));
   check_allocated(new_node,
                   "Memory allocation failed during allocating new Node\n");
 
@@ -136,14 +138,15 @@ void LinkList_insert_start(LinkedList *list, void *value) {
                   "Memory allocation failed during allocating Data\n");
   memcpy(new_node->data, value, list->typeSize);
 
+  list->head->prev = new_node;
   new_node->next = list->head;
-
+  new_node->prev = NULL;
   list->head = new_node;
   list->length++;
 }
 
-void LinkList_insert_after(LinkedList *list, Node *node, void *value) {
-  Node *new_node = (Node *)malloc(sizeof(Node));
+void DLinkList_insert_after(DLinkedList *list, DNode *node, void *value) {
+  DNode *new_node = (DNode *)malloc(sizeof(DNode));
   check_allocated(new_node,
                   "Memory allocation failed during allocating new Node\n");
 
@@ -153,6 +156,7 @@ void LinkList_insert_after(LinkedList *list, Node *node, void *value) {
   memcpy(new_node->data, value, list->typeSize);
 
   new_node->next = node->next;
+  new_node->prev = node;
   node->next = new_node;
 
   if (new_node->next == NULL) {
@@ -161,37 +165,38 @@ void LinkList_insert_after(LinkedList *list, Node *node, void *value) {
   list->length++;
 }
 
-void LinkList_add_all(LinkedList *result, LinkedList *add) {
-  Node *current = add->head;
+void DLinkList_add_all(DLinkedList *result, DLinkedList *add) {
+  DNode *current = add->head;
   while (current != NULL) {
-    LinkList_insert_end(result, current->data);
+    DLinkList_insert_end(result, current->data);
     current = current->next;
   }
 }
 
-void LinkList_insert_sorted(LinkedList *list, void *value, operation_func comparitor) {
+void DLinkList_insert_sorted(DLinkedList *list, void *value,
+                             operation_func comparitor) {
   if (list->head == NULL || comparitor(list->head->data, value)) {
-    LinkList_insert_start(list, value);
+    DLinkList_insert_start(list, value);
     return;
   }
 
-  Node *current = list->head;
+  DNode *current = list->head;
   while (current->next != NULL) {
     if (comparitor(current->next->data, value)) {
       break;
     }
     current = current->next;
   }
-  LinkList_insert_after(list, current, value);
+  DLinkList_insert_after(list, current, value);
 }
 
-void LinkList_reverse(LinkedList *list) {
-  Node *prev = NULL;
-  Node *current = list->head;
+void DLinkList_reverse(DLinkedList *list) {
+  DNode *prev = NULL;
+  DNode *current = list->head;
   list->tail = list->head;
 
   while (current != NULL) {
-    Node *next = current->next;
+    DNode *next = current->next;
     current->next = prev;
     prev = current;
     current = next;
@@ -199,7 +204,7 @@ void LinkList_reverse(LinkedList *list) {
   list->head = prev;
 }
 
-void LinkList_print(LinkedList *list, callback_func printer) {
+void DLinkList_print(DLinkedList *list, callback_func printer) {
   printf("[length: %d head: %p tail: %p]\n", list->length, list->head,
          list->tail);
 
@@ -209,17 +214,18 @@ void LinkList_print(LinkedList *list, callback_func printer) {
   }
 
   printf("Items: [ ");
-  for (Node *curr = list->head; curr != NULL; curr = curr->next) {
+  for (DNode *curr = list->head; curr != NULL; curr = curr->next) {
     if (printer != NULL) {
       printer(curr->data);
     } else {
-      printf("{ %p, Data: %p | -> Next: %p }\n", curr, curr->data, curr->next);
+      printf("{ %p, Data: %p | <- Prev: %p | -> Next: %p }\n", curr, curr->data,
+             curr->prev, curr->next);
     }
   }
   printf("]\n");
 }
 
-void LinkList_kill(LinkedList *list) {
+void DLinkList_kill(LinkedList *list) {
   Node *current = list->head;
   while (current != NULL) {
     Node *temp = current;

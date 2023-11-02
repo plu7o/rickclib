@@ -5,6 +5,8 @@
 #include "../include/lists.h"
 #include <limits.h>
 
+#define min(a, b)
+
 // --------------------- Binary Tree ---------------------
 
 typedef enum uniontype { TYPE_CHAR, TYPE_INT, TYPE_STRING } DataType;
@@ -34,6 +36,9 @@ DynamicList *btree_depth_first(BinaryTree *tree);
 DynamicList *btree_bredth_first(BinaryTree *tree);
 LinkedList *btree_depth_first_recursive(BinaryTree *tree);
 int btree_sum_recursive(BinaryTree *tree);
+int btree_minimum(BinaryTree *tree);
+int btree_minimum_recursive(BinaryTree *tree);
+int btree_max_rl_path_recursive(BinaryTree *tree);
 int btree_sum(BinaryTree *tree);
 bool btree_includes(BinaryTree *tree, char letter);
 bool btree_include_recursive(BinaryTree *tree, char target);
